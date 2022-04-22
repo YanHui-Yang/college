@@ -1,0 +1,27 @@
+server:
+  port: 8120 #服务端口
+
+spring:
+  profiles:
+    active: dev #环境设置
+  application:
+    name: service-oss #服务名
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848 #nacos服务地址
+  redis:
+    host: 127.0.0.1
+#    port: 6379
+    port: 6379
+    database: 0
+    password:  #默认为空
+
+aliyun:
+  oss:
+    endpoint: oss-cn-guangzhou.aliyuncs.com
+    keyid: LTAI5tBh4VaJbxeJ8oGgvzSF
+    keysecret: Os6GiSGeW1sc2Gtfun4abFdyWiTOEr
+    #bucket可以在控制台创建，也可以使用java代码创建，注意先测试bucket是否已被占用
+    bucketname: online-study-tong

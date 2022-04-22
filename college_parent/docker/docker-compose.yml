@@ -1,0 +1,51 @@
+version: '3'
+services:
+  mysqlCollege:
+    image: mysql:8.0.28-oracle
+    container_name: mysqlCollege
+    restart: always
+    ports:
+      - '39510:3306'
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_DATABASE=root
+      - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - '39510:3306'
+    volumes:
+      - /docker/mysqlCollege/logs:/logs
+      - /docker/mysqlCollege/data:/var/lib/mysql
+  nacosCollege:
+    image: nacos/nacos-server
+    container_name: nacosCollege
+    restart: always
+    depends_on:
+      - mysqlCollege
+    environment:
+      PREFER_HOST_MODE: hostname #如果支持主机名可以使用hostname,否则使用ip，默认也是ip
+      SPRING_DATASOURCE_PLATFORM: mysql #数据源平台 仅支持mysql或不保存empty
+      MODE: standalone
+      MYSQL_SERVICE_HOST: mysqlCollege
+      MYSQL_SERVICE_DB_NAME: nacos #数据库名
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_USER: root #数据库管理账号
+      MYSQL_SERVICE_PASSWORD: 123456 #数据库管理密码
+      JVM_XMS: 512m
+      JVM_MMS: 320m
+    volumes:
+      - /docker/nacosCollege/logs:/home/nacos/logs
+    ports:
+      - '39520:8848'
+  redisCollege:
+    image: redis
+    container_name: redisCollege
+    restart: always
+    ports:
+      - '6379:6379'
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - /docker/redisCollege/data:/data
+      - /docker/redisCollege/redis.conf:/usr/local/redis/redis.conf
+      - /docker/redisCollege/logs:/logs
+    command: ["redis-server","/usr/local/redis/redis.conf"]
